@@ -20,7 +20,7 @@ blows sometime, you know?
 <a href="http://www.google.com">and a link</a>
 """
 #date_created = xmlrpclib.DateTime(datetime.datetime.strptime("2020-10-20 21:08", "%Y-%m-%d %H:%M"))
-categories = ["tools","computers"]
+categories = ["tools","computers","totallynewcategory..."]
 tags = ["sometag", "othertag"]
 data = {'title': title, 'description': content, 'categories': categories, 'mt_keywords': tags}
 
