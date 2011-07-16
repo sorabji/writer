@@ -1,0 +1,148 @@
+* structs:
+
+** WordPressBlog():
+""" represents a wordpress blog """
+  - self.id // blog id :: string
+  - self.name // name of the blog :: string
+  - self.url // url of the blog :: string
+  - self.isAdmin :: boolean
+** WordPressUser():
+""" represents a wordpress user """
+  - self.id // user id :: int
+  - self.firstName // user first name :: string
+  - self.lastName // user last name:: string
+  - self.nickname // user nickname :: string
+  - self.email // user email :: string
+** WordPressCategory():
+""" represents a wordpress category """
+  - self.id // id of the category :: int
+  - self.name // name of the category :: string
+  - self.isPrimary  :: boolean
+** WordPressPost():
+""" represents a wordpress post """
+  - self.id // id of the post :: int
+  - self.title // title of the post :: string
+  - self.date // date of the post :: datetime object?
+  - self.permaLink // permanent link for the post :: string
+  - self.description // content of the blog :: string
+  - self.textMore // more content :: string
+  - self.excerpt // excerpt of the post :: string
+  - self.link // link to the post :: string
+  - self.categories // categories associated w/ the post :: list
+  - self.user // owner of the post :: string
+  - self.allowPings :: boolean
+  - self.allowComments :: boolean
+
+
+* classes
+** WordPressClient():
+""" Client to connect to WordPress xmlrpc interface"""
+*** data members
+  - self.url // url to the xmlrpc.php interface on the blog :: string
+  - self.user // username to login to the blog :: string
+  - self.password // password to login to the blog :: string
+  - self.blogId // id of the blog to manipulate :: int
+  - self.categories // categories associated w/ the blog :: list
+  - self._server // connection to the blog :: xmlrpclib.ServerProxy object
+*** methods
+**** constructor
+  - __init__(self,url,user,password)
+**** _filterPost(self,post) :: changes a post struct into a WordPressPost instance
+***** parameters
+  - post :: dictionary
+    - post['permaLink']
+    - post['description']
+    - post['title']
+    - post['mt_excerpt']
+    - post['userid']
+    - post['dateCreated']
+    - post['link']
+    - post['mt_text_more']
+    - post['mt_allow_comments']
+    - post['postid']
+    - post['categories']
+    - post['mt_allow_pings']
+***** return
+  - postObj :: WordPressPost() (defined above in structs)
+**** _filterCategory(self,cat) :: changes a category struct into a WordPressCategory instance
+***** parameters
+  - cat :: 
+
+
+
+  - cat :: dictionary
+    - cat['categoryId']
+    - cat['categoryName']
+    - cat['isPrimary']
+***** return
+  - catObj :: WordPressCategory() (defined above in structs)
+**** selectBlog(self,blogId) :: selects a blog
+***** parameters
+  - blogId // id for a blog :: int
+**** supportedMethods(self) :: returns a list of supported methods
+**** getLastPost(self) :: returns the last post
+***** return
+  - tuple(self.getRecentPosts(1))[0]
+**** getRecentPosts(self,numPosts=5) :: returns numPosts most recent posts
+***** param
+  - numPosts // number of posts to retrieve, defaults to 5 :: int
+***** return
+  - yield self._filterPost(post)
+  - WordPressPost()
+
+**** getPost(self,postId) :: returns the requested post
+***** param
+  - postId // id of the post you want :: int
+***** return
+  - WordPressPost()
+**** getUserInfo(self) :: returns user info
+***** return
+  - userObj :: WordPressUser() 
+**** getUsersBlogs(self) :: returns a number of WordPressBlog() objects
+***** return
+FIGURE THIS ONE OUT!!!
+**** newPost(self,post,publish) :: inserts a new post
+***** param
+  - post :: WordPressPost()
+  - publish :: boolean (to publish or not to publish, that is the...)
+***** return
+  - idNewPost :: int (id of the new post)
+**** getPostCategories(self,postId) :: gets the categories associated w/ a post
+***** param
+  - postid :: int, id of the post
+***** return
+  - yield WordPressCategory()
+**** setPostCategories(self,postId,categories :: set a post's categories
+***** param
+  - postid :: int, id of the post
+  - categories :: WordPressCategory() ?
+**** editPost(self,postId,post,publish) :: edits a post
+***** param
+  - postId :: int, id of the post to be edited
+  - post :: WordPressPost(), the newer, better content
+  - publish :: boolean
+**** deletePost(self,postId) :: deletes a post
+***** param
+  - postId :: int, id of the post to be deleted
+**** getCategoryList(self) :: get a blog's categories list
+**** getCategoryIdFromName(self,name) :: get category id from category name
+***** param
+  - name :: string, name of the category you want the id for
+***** return
+  - c.id :: int, yeah
+**** getTrackbackPings(self,postId) :: get trackback pings of a post
+***** param
+  - postId :: id of the post you want trackback pings for
+***** return
+  - self._server.mt.getTrackbackPings(postId) :: whatever that is...fucking python and it's lack of docu of xmlrpclib
+**** publishPost(self,postId) :: publish a post
+***** param 
+  - postId :: int, id of the post to publish
+***** return 
+  - boolean
+**** getPingbacks(self,postUrl) :: get pingbacks of post
+**** newMediaObject(self,mediaFileName) :: adds new media object (image,movie,etc ...)
+***** param
+  - mediaFileName :: string, filename for the media object
+***** return
+  - string, a url
