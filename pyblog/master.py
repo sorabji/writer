@@ -21,27 +21,22 @@ parser.add_option("--postid",
         help="id of the post to be edited")
 parser.add_option("--post",
         action="store_true",
-        type="string",
         dest="isPost",
-        default=False
+        default=False,
         help="flag to indicate the posting of a new...post")
 parser.add_option("--edit",
         action="store_true",
-        type="string",
         dest="isEdit",
-        default=False
+        default=False,
         help="flag to indicate the editing of an old post...requires the postid of the post to edit")
 parser.add_option("--delete",
         action="store_true",
-        type="string",
         dest="isDelete",
-        default=False
+        default=False,
         help="flag to indicate the deletion of an old post...requires the postid of the post to delete")
 
 (options,args) = parser.parse_args()
 
-if (len(args !=1):
-        parser.error("incorrect number of arguments!")
 if (options.url!=None):
     url = options.url
 else:
@@ -60,12 +55,11 @@ else:
     pwd = "52cards"
     #print "you must give a password"
     #exit(0)
+if (options.isDelete or options.isEdit) and (options.postid == None):
+    parser.error("i need a postid in order to edit/delete a post")
+
 if (options.postid!=None):
     postid = options.postid
-else:
-    print "i can't edit the post unless i know what post i'm editing..."
-    exit(0)
-
 
 #blogID = ""
 
@@ -88,6 +82,23 @@ categories = ["tools","computers","totallynewcategory..."]
 tags = ["sometag", "othertag"]
 data = {'title': title, 'description': content, 'categories': categories, 'mt_keywords': tags}
 
-post_id = blog.edit_post(postid,data)
-print post_id
-print "post was...edited"
+if options.isPost:
+    postid = blog.new_post(data)
+    print "the new post has an id of:%d" % postid
+    exit(0)
+elif options.isDelete:
+    success = blog.delete_post(postid)
+    if success:
+        print "post %d was deleted!" % postid
+        exit(0)
+    else:
+        print "post %d could not be deleted :<" % postid
+        exit(1)
+elif options.isEdit:
+    success = blog.edit_post(postid,data)
+    if success:
+        print "post %d was edited!" % postid
+        exit(0)
+    else:
+        print "post %d could not be edited :<" % postid
+        exit(1)
