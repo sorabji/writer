@@ -84,7 +84,7 @@ data = {'title': title, 'description': content, 'categories': categories, 'mt_ke
 
 if options.isPost:
     postid = blog.new_post(data)
-    print "the new post has an id of:%d" % postid
+    print "the new post has an id of:%s" % postid
     exit(0)
 elif options.isDelete:
     success = blog.delete_post(postid)
